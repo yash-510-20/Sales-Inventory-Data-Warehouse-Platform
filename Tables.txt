@@ -1,0 +1,57 @@
+Staging In Integration
+1. STG_COUNTRY
+2. STG_ORDER_METHOD
+3. STG_PRODUCT
+4. STG_PRODUCT_NAME_LOOKUP
+5. STG_RETAILER
+6. STG_RETURN_REASON
+7. STG_WAREHOUSE
+
+Target Tables in Integration
+1. TBL_DIM_COUNTRY_LKP
+2. TBL_DIM_ORDER
+3. TBL_DIM_ORDER_METHOD_LKP
+4. TBL_DIM_PRODUCT
+5. TBL_DIM_PRODUCT_NAME_LKP
+6. TBL_DIM_RETAILER_LKP
+7. TBL_DIM_RETURN_REASON_LKP
+8. TBL_DIM_WAREHOUSE_LKP
+
+Staging Tables In Ingection
+
+1. Branch
+2. COUNTRY
+3. File_Config
+4. Inentory_Leels
+5. Order_Detail
+6. Order_Header
+7. Order_Method
+8. PRODUCT
+9. PRODUCT_NAME
+10. RETAILER
+11. Return_Item
+12. RETURN_REASON
+13. WAREHOUSE
+
+
+* This are file will be reading from table for assist
+***watermarktable
+
+| Watermark_ID | Table_Name       | LastProcessedValue | ProcessedTime | Incremental_stat |
+|--------------|------------------|--------------------|----------------|------------------|
+| 1            | ORDER_HEADER     | 2005-01-23         | 2026-05-15     | Y                |
+| 2            | ORDER_DETAILS    | 2004-12-31         | 2026-05-15     | Y                |
+| 3            | RETURNED_ITEM    | 2004-12-31         | 2026-05-15     | Y                |
+| 4            | INVENTORY_LEVELS | 2004-12-01         | 2026-05-15     | Y                |
+| 8            | BRANCH           | NULL               | NULL           | N                |
+| 9            | PRODUCT          | NULL               | NULL           | N                |
+
+*** File_Config
+
+| Id | FileName                 | Delimiter | FolderPath | TargetTable         | HasHeader | IsActive |
+|----|--------------------------|-----------|-------------|---------------------|------------|-----------|
+| 1  | COUNTRY.txt              | \|        | raw/        | COUNTRY             | True       | True      |
+| 2  | ORDER_METHOD.csv         | ,         | raw/        | ORDER_METHOD        | True       | True      |
+| 3  | PRODUCT_NAME_LOOKUP.csv  | ,         | raw/        | PRODUCT_NAME_LOOKUP | True       | True      |
+| 4  | Retailer.csv             | ,         | raw/        | RETAILER            | True       | True      |
+| 5  | RETURN_REASON.csv        | ,         | raw/        | RETURN_REASON       | True       | True      |
