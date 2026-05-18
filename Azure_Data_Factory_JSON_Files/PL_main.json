@@ -1,0 +1,103 @@
+{
+    "name": "PL_main",
+    "properties": {
+        "activities": [
+            {
+                "name": "PL_raw_to_adls",
+                "type": "ExecutePipeline",
+                "dependsOn": [],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "PL_Source-Raw_Table_adls",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                }
+            },
+            {
+                "name": "PL_adls_stg_to_ASQL_sql",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "truncating all table in ingection",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "PL_RAW_to_Injection_ADLS_ASQL",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                }
+            },
+            {
+                "name": "truncating all table in ingection",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "PL_raw_to_adls",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.00:10:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[dbo].[truncate_retail_tables]"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LS_DB_ingestion",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Stored procedure truncating staging tables",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "PL_adls_stg_to_ASQL_sql",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.00:10:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[STG].[truncate_staging_tables]"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LS_ASQL_Integration",
+                    "type": "LinkedServiceReference"
+                }
+            }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2026-05-15T14:46:28Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
