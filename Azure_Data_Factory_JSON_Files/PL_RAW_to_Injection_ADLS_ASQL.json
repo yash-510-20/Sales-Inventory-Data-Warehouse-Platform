@@ -1,0 +1,175 @@
+{
+    "name": "PL_RAW_to_Injection_ADLS_ASQL",
+    "properties": {
+        "activities": [
+            {
+                "name": "ACT_ADB_NOTE_adls_to_ingection_sql",
+                "type": "DatabricksNotebook",
+                "state": "Inactive",
+                "onInactiveMarkAs": "Succeeded",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.00:10:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/ashleen@tuta.io/retail folder/raw_to_ingection_layer"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LS_ADB",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "ACT_ADB_NOTE_ingection_to_staging",
+                "type": "DatabricksNotebook",
+                "state": "Inactive",
+                "onInactiveMarkAs": "Succeeded",
+                "dependsOn": [
+                    {
+                        "activity": "ACT_ADB_NOTE_adls_to_ingection_sql",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.00:10:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/ashleen@tuta.io/Integration Layer SCD-1 for 6"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LS_ADB",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "merge_6_tables_nojoin",
+                "type": "SqlServerStoredProcedure",
+                "state": "Inactive",
+                "onInactiveMarkAs": "Succeeded",
+                "dependsOn": [
+                    {
+                        "activity": "ACT_ADB_NOTE_ingection_to_staging",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.00:10:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[STG].[SP_MERGE_ALL_DIMENSIONS]"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LS_ASQL_Integration",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Stored_procedure_product_dim",
+                "type": "SqlServerStoredProcedure",
+                "state": "Inactive",
+                "onInactiveMarkAs": "Succeeded",
+                "dependsOn": [
+                    {
+                        "activity": "ACT_ADB_NOTE_scd1_for_productdim",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.00:10:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[STG].[SP_MERGE_PRODUCT_DIM]"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LS_ASQL_Integration",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "ACT_ADB_NOTE_scd1_for_productdim",
+                "type": "DatabricksNotebook",
+                "state": "Inactive",
+                "onInactiveMarkAs": "Succeeded",
+                "dependsOn": [
+                    {
+                        "activity": "merge_6_tables_nojoin",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.00:10:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/ashleen@tuta.io/DIM_PRODUCT TABLE SCD-1"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LS_ADB",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "ACT_ADB_NOTE_scd2_for_order_dim",
+                "type": "DatabricksNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Stored_procedure_product_dim",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.00:10:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/ashleen@tuta.io/SCD-2 TBL_DIM_ORDER"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LS_ADB",
+                    "type": "LinkedServiceReference"
+                }
+            }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2026-05-15T14:46:28Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
