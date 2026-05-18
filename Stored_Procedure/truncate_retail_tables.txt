@@ -1,0 +1,38 @@
+--- Ingection DB
+
+
+CREATE PROCEDURE truncate_retail_tables
+
+AS
+
+BEGIN
+
+    SET NOCOUNT ON;
+
+
+
+    TRUNCATE TABLE Branch;
+
+    TRUNCATE TABLE COUNTRY;
+
+    TRUNCATE TABLE Inventory_Levels;
+
+    TRUNCATE TABLE Order_Detail;
+
+    TRUNCATE TABLE Order_Header;
+
+    TRUNCATE TABLE Order_Method;
+
+    TRUNCATE TABLE PRODUCT;
+
+    TRUNCATE TABLE PRODUCT_NAME;
+
+    TRUNCATE TABLE RETAILER;
+
+    TRUNCATE TABLE Return_Item;
+
+    TRUNCATE TABLE RETURN_REASON;
+
+    TRUNCATE TABLE WAREHOUSE;
+
+END;
