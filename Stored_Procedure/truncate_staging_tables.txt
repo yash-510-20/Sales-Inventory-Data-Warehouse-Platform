@@ -1,3 +1,4 @@
+--Integration DB
 
 CREATE PROCEDURE STG.truncate_staging_tables
 
