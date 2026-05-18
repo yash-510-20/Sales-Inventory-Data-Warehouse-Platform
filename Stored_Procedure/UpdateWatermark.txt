@@ -1,0 +1,27 @@
+--Ingection DB
+
+CREATE PROCEDURE UpdateWatermark
+
+    @TableName VARCHAR(100),
+
+    @NewWatermark DATETIME
+
+AS
+
+BEGIN
+
+    SET NOCOUNT ON;
+
+
+
+    UPDATE watermarktable
+
+    SET LastProcessedValue = @NewWatermark,
+
+    ProcessedTime=GETDATE()
+
+    
+
+    WHERE Table_Name = @TableName;
+
+END;
