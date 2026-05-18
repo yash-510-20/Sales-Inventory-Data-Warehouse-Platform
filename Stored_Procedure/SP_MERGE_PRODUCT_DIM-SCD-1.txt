@@ -1,0 +1,137 @@
+CREATE PROCEDURE STG.SP_MERGE_PRODUCT_DIM
+
+AS
+
+BEGIN
+
+
+
+    SET NOCOUNT ON;
+
+
+
+    MERGE dbo.TBL_DIM_PRODUCT AS tgt
+
+    USING STG.STG_PRODUCT AS src
+
+    ON tgt.PRODUCT_NUMBER = src.PRODUCT_NUMBER
+
+
+
+    WHEN MATCHED THEN
+
+    UPDATE SET
+
+
+
+        tgt.PRODUCT_NAME = src.PRODUCT_NAME,
+
+
+
+        tgt.BASE_PRODUCT_NUMBER = src.BASE_PRODUCT_NUMBER,
+
+
+
+        tgt.PRODUCT_COLOR = src.PRODUCT_COLOR,
+
+
+
+        tgt.PRODUCT_SIZE = src.PRODUCT_SIZE,
+
+
+
+        tgt.PRODUCT_BRAND = src.PRODUCT_BRAND,
+
+
+
+        tgt.PRODUCTION_COST = src.PRODUCTION_COST,
+
+
+
+        tgt.INTRODUCTION_DATE = src.INTRODUCTION_DATE,
+
+
+
+        tgt.DISCONTINUED_DATE = src.DISCONTINUED_DATE,
+
+
+
+        tgt.SOURCE_ID = src.SOURCE_ID,
+
+
+
+        tgt.DATA_DATE = src.DATA_DATE,
+
+
+
+        tgt.UPDATE_DATE = GETDATE()
+
+
+
+    WHEN NOT MATCHED THEN
+
+    INSERT
+
+    (
+
+        PRODUCT_NUMBER,
+
+        PRODUCT_NAME,
+
+        BASE_PRODUCT_NUMBER,
+
+        PRODUCT_COLOR,
+
+        PRODUCT_SIZE,
+
+        PRODUCT_BRAND,
+
+        PRODUCTION_COST,
+
+        INTRODUCTION_DATE,
+
+        DISCONTINUED_DATE,
+
+        SOURCE_ID,
+
+        DATA_DATE,
+
+        UPDATE_DATE
+
+    )
+
+
+
+    VALUES
+
+    (
+
+        src.PRODUCT_NUMBER,
+
+        src.PRODUCT_NAME,
+
+        src.BASE_PRODUCT_NUMBER,
+
+        src.PRODUCT_COLOR,
+
+        src.PRODUCT_SIZE,
+
+        src.PRODUCT_BRAND,
+
+        src.PRODUCTION_COST,
+
+        src.INTRODUCTION_DATE,
+
+        src.DISCONTINUED_DATE,
+
+        src.SOURCE_ID,
+
+        src.DATA_DATE,
+
+        GETDATE()
+
+    );
+
+
+
+END
